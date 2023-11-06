@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
             frameHeight: 48
         });
         this.load.image('grass', './assets/spritesheets/grassy.png');
-        this.load.image('background', './assets/spritesheets/fireback.png');
+        this.load.image('background', './assets/spritesheets/nightback.png');
         this.load.image('cactus', './assets/spritesheets/cactus.png');
         this.load.spritesheet('imp', './assets/spritesheets/imp.png', {
             frameWidth: 50,
