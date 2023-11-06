@@ -5,15 +5,16 @@ class Menu extends Phaser.Scene {
 
     preload() {
         // load audio
+        this.load.image('logo', './assets/spritesheets/gamelogo.png');
       }
 
     create() {
+        this.add.image(width/2, height/3.5, 'logo').setScale(0.5);
         cursors = this.input.keyboard.createCursorKeys();
         let menuConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
-            backgroundColor: '#FACADE',
-            color: '#843605',
+            color: '#FF0000',
             align: 'right',
             padding: {
                 top: 5,
@@ -21,9 +22,10 @@ class Menu extends Phaser.Scene {
             },
             fixedWidth: 0
         }
-        menuConfig.backgroundColor = '#FACADE';
-        menuConfig.color = '#000';
-        this.add.text(this.scale.width/2, this.scale.height/2, 'Press ← for Novice or → for Expert', menuConfig).setOrigin(0.5);
+        this.add.text(this.scale.width/2, this.scale.height/1.8, 'You have escaped hell itself.', menuConfig).setOrigin(0.5);
+        this.add.text(this.scale.width/2, this.scale.height/1.68, 'Your creator is not too happy.', menuConfig).setOrigin(0.5);
+        this.add.text(this.scale.width/2, this.scale.height/1.5, 'Use up arrow to jump and hold down arrow to lunge/roll', menuConfig).setOrigin(0.5);
+        this.add.text(this.scale.width/2, this.scale.height/1.4, 'Press SPACE to play', menuConfig).setOrigin(0.5);
 
     }
 

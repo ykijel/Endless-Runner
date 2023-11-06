@@ -15,6 +15,10 @@ class Play extends Phaser.Scene {
         this.load.image('grass', './assets/spritesheets/grassy.png');
         this.load.image('background', './assets/spritesheets/fireback.png');
         this.load.image('cactus', './assets/spritesheets/cactus.png');
+        this.load.spritesheet('imp', './assets/spritesheets/imp.png', {
+            frameWidth: 50,
+            frameHeight: 30
+        });
     }
 
     create() {
@@ -63,6 +67,15 @@ class Play extends Phaser.Scene {
                 end: 6
             })
         });
+        this.anims.create({
+            key: 'imp-animation',
+            frameRate: 5,
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('imp', {
+                start: 0,
+                end: 1
+            })
+        });
 
         // Create a group for cacti
         this.cacti = this.physics.add.group();
@@ -75,28 +88,95 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.cacti, this.cactusCollision, null, this);
 
         // Set up a timer event to spawn cacti at random intervals
-        this.spawnCactusTimer = this.time.addEvent({
-            delay: Phaser.Math.Between(1000, 5000), // Adjust the delay as needed
+        this.spawnObstacleTimer = this.time.addEvent({
+            delay: Phaser.Math.Between(1000, 2500), // Adjust the delay as needed
             loop: true,
-            callback: this.spawnCactus,
+            callback: this.spawnObstacle,
             callbackScope: this
+        })
+        if(!this.highScore)
+        {
+            this.highScore = 0;
+        }
+        this.score = 0;
+        let scoreConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 100
+        }
+        let scoreTextConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            color: '#FFFFFF',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 200
+        }
+        this.scoreLeft = this.add.text(125, 10, this.p1Score, scoreConfig);
+        this.scoreHigh = this.add.text(width-200, 10, this.highScore, scoreConfig);
+        this.scoreTextHigh = this.add.text(width-400, 10, "High Score:", scoreTextConfig);
+        this.scoreText = this.add.text(-75, 10, "Score:", scoreTextConfig);
+        this.time.addEvent({
+            delay: 75,
+            repeat: -1, // Repeat indefinitely
+            callback: () => {
+                this.score++; // Increment the score
+                this.scoreLeft.setText(this.score); // Update the displayed score
+                if(this.highScore < this.score)
+                {
+                    this.highScore = this.score;
+                    this.scoreHigh.setText(this.highScore);
+                }
+            }
         });
+        this.obstacleDelayMin = 800;
+        this.obstacleDelayMax = 2500;
+    }
+    
+
+    spawnObstacle() {
+        const x = this.scale.width;
+        const y = this.scale.height - 61; // Position the obstacle on top of the ground
+        let obstacle;
+
+        // Randomly decide whether to spawn a cactus or an imp
+        if (Phaser.Math.Between(0, 1) === 0) {
+            // Spawn a cactus
+            obstacle = this.cacti.create(x, y, 'cactus').setScale(0.15);
+            obstacle.body.setSize(width / 3, height + 50, 30,0);
+        } else {
+            // Spawn an imp
+            var yVal = Phaser.Math.Between(30, 80);
+            obstacle = this.cacti.create(x, y-yVal, 'imp').setScale(4); // Adjust scale as needed
+            obstacle.body.setSize(obstacle.width/2.5, obstacle.height/2.7).setOffset(20,8); // Set collision size accordingly
+            obstacle.anims.play('imp-animation');
+        }
+
+        obstacle.body.allowGravity = false; // Disable gravity for the obstacle
+
+        // Set a random delay for the next obstacle spawn
+        const randomDelay = Phaser.Math.Between(800, 2300); // Adjust the delay range as needed
+        this.spawnObstacleTimer.delay = randomDelay;
+
+        if (this.score > 0 && this.score % 100 === 0 && this.obstacleDelayMin >= 400) {
+            this.obstacleDelayMin -= 30; // Decrease the minimum delay
+            this.obstacleDelayMax -= 100; // Decrease the maximum delay
+        }
+
+        obstacle.setVelocityX(this.backgroundSpeed * -60); // Make the obstacle scroll along with the ground
+        obstacle.setImmovable(true);
     }
 
-    spawnCactus() {
-        const x = this.scale.width;
-        const y = this.scale.height - 61; // Position the cactus on top of the ground
-        const cactus = this.cacti.create(x, y, 'cactus').setScale(0.15);
-        cactus.body.setSize(width/2, height+50, 30, 0);
-        cactus.body.allowGravity = false; // Disable gravity for the cactus
-    
-        // Set a random delay for the next cactus spawn
-        const randomDelay = Phaser.Math.Between(1000, 3000); // Adjust the delay range as needed
-        this.spawnCactusTimer.delay = randomDelay;
-    
-        cactus.setVelocityX(this.backgroundSpeed * -60); // Make the cactus scroll along with the ground
-        cactus.setImmovable(true);
-    }
     cactusCollision(player, cactus) {
         this.scene.start('menuScene');
     }
@@ -107,7 +187,9 @@ class Play extends Phaser.Scene {
         // Move the background layer for parallax scrolling
         // this.background.tilePositionX += this.backgroundSpeed;
         this.ground.tilePositionX += this.backgroundSpeed;
-    
+        if (this.score > 0 && this.score % 100 === 0) {
+            this.backgroundSpeed+=0.12
+        }
         // Update the player's movement
         let playerVector = new Phaser.Math.Vector2(0, 0);
         playerDirection = 'right';
@@ -125,12 +207,10 @@ class Play extends Phaser.Scene {
             this.player.anims.play('roll-right', true); // Play the rolling animation
         } else {
             this.player.anims.play('walk-right', true);
-            this.player.body.setSize(25, 30).setOffset(10, 10);
+            this.player.body.setSize(20, 30).setOffset(15, 10);
         }
     
         playerVector.normalize();
-    
-        this.player.setVelocityX(this.PLAYER_VELOCITY * playerVector.x);
     
         // Reset the jump state if the player is on the ground
         if (this.player.body.onFloor()) {
