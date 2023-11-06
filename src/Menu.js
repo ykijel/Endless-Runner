@@ -6,9 +6,12 @@ class Menu extends Phaser.Scene {
     preload() {
         // load audio
         this.load.image('logo', './assets/spritesheets/gamelogo.png');
+        this.load.audio('backgroundMusic', 'assets/spritesheets/Push.mp3');
       }
 
     create() {
+        this.backgroundMusic = this.sound.add('backgroundMusic');
+        this.backgroundMusic.play({ loop: true });
         this.add.image(width/2, height/3.5, 'logo').setScale(0.5);
         cursors = this.input.keyboard.createCursorKeys();
         let menuConfig = {
@@ -24,14 +27,16 @@ class Menu extends Phaser.Scene {
         }
         this.add.text(this.scale.width/2, this.scale.height/1.8, 'You have escaped hell itself.', menuConfig).setOrigin(0.5);
         this.add.text(this.scale.width/2, this.scale.height/1.68, 'Your creator is not too happy.', menuConfig).setOrigin(0.5);
-        this.add.text(this.scale.width/2, this.scale.height/1.5, 'Use up arrow to jump and hold down arrow to lunge/roll', menuConfig).setOrigin(0.5);
+        this.add.text(this.scale.width/2, this.scale.height/1.5, 'Use UP ARROW to jump and hold DOWN ARROW to lunge/roll', menuConfig).setOrigin(0.5);
         this.add.text(this.scale.width/2, this.scale.height/1.4, 'Press SPACE to play', menuConfig).setOrigin(0.5);
 
     }
 
     update() {
         if (cursors.space.isDown) {
-          this.scene.start('playScene');    
+          this.backgroundMusic.stop();
+          this.scene.start('playScene');
+          
         }
     }
 

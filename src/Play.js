@@ -19,9 +19,12 @@ class Play extends Phaser.Scene {
             frameWidth: 50,
             frameHeight: 30
         });
+        this.load.audio('backgroundMusic2', 'assets/spritesheets/Push 1.mp3');
     }
 
     create() {
+        this.backgroundMusic2 = this.sound.add('backgroundMusic2');
+        this.backgroundMusic2.play({ loop: true });
         // Create the background and set its scrolling speed
         this.background = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0);
         this.backgroundSpeed = 7; // Adjust the speed as needed
@@ -178,6 +181,7 @@ class Play extends Phaser.Scene {
     }
 
     cactusCollision(player, cactus) {
+        this.backgroundMusic2.stop();
         this.scene.start('menuScene');
     }
 
