@@ -7,11 +7,14 @@ class Menu extends Phaser.Scene {
         // load audio
         this.load.image('logo', './assets/spritesheets/gamelogo.png');
         this.load.audio('backgroundMusic', 'assets/spritesheets/Push.mp3');
+        this.load.audio('blip', 'assets/spritesheets/blip_select12.wav');
       }
 
     create() {
         this.backgroundMusic = this.sound.add('backgroundMusic');
+        this.blip = this.sound.add('blip');
         this.backgroundMusic.play({ loop: true });
+        this.backgroundMusic.setVolume(0.3);
         this.add.image(width/2, height/3.5, 'logo').setScale(0.5);
         cursors = this.input.keyboard.createCursorKeys();
         let menuConfig = {
@@ -35,6 +38,7 @@ class Menu extends Phaser.Scene {
     update() {
         if (cursors.space.isDown) {
           this.backgroundMusic.stop();
+          this.blip.play();
           this.scene.start('playScene');
           
         }

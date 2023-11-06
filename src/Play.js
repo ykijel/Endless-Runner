@@ -20,11 +20,18 @@ class Play extends Phaser.Scene {
             frameHeight: 30
         });
         this.load.audio('backgroundMusic2', 'assets/spritesheets/Push 1.mp3');
+        this.load.audio('JumpNoise', 'assets/spritesheets/JumpNoise.mp3');
+        this.load.audio('RollNoise', 'assets/spritesheets/RollNoise.mp3');
+        this.load.audio('DeathNoise', 'assets/spritesheets/DeathNoise.mp3');
     }
 
     create() {
         this.backgroundMusic2 = this.sound.add('backgroundMusic2');
+        this.JumpNoise = this.sound.add('JumpNoise');
+        this.RollNoise = this.sound.add('RollNoise');
+        this.DeathNoise = this.sound.add('DeathNoise');
         this.backgroundMusic2.play({ loop: true });
+        this.backgroundMusic2.setVolume(0.25);
         // Create the background and set its scrolling speed
         this.background = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background').setOrigin(0);
         this.backgroundSpeed = 7; // Adjust the speed as needed
@@ -182,6 +189,7 @@ class Play extends Phaser.Scene {
 
     cactusCollision(player, cactus) {
         this.backgroundMusic2.stop();
+        this.DeathNoise.play();
         this.scene.start('menuScene');
     }
 
@@ -202,17 +210,24 @@ class Play extends Phaser.Scene {
             // Player is pressing up and not already jumping
             this.isPlayerJumping = true;
             this.player.setVelocityY(this.PLAYER_JUMP_VELOCITY); // Apply jump velocity
+            this.JumpNoise.play();
         }
         if (cursors.down.isDown && !this.isPlayerRolling) {
             // Player is pressing down and not already rolling
+            this.RollNoise.play();
             this.isPlayerRolling = true;
             this.player.body.setGravityY(6000); // Apply higher gravity when rolling
             this.player.body.setSize(25, 15).setOffset(10, 25);
             this.player.anims.play('roll-right', true); // Play the rolling animation
+            
+            
         } else {
             this.player.anims.play('walk-right', true);
             this.player.body.setSize(20, 30).setOffset(15, 10);
         }
+
+            
+
     
         playerVector.normalize();
     
