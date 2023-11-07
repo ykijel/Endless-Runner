@@ -5,9 +5,9 @@ class Menu extends Phaser.Scene {
 
     preload() {
         // load audio
-        this.load.image('logo', './assets/spritesheets/gamelogo.png');
-        this.load.audio('backgroundMusic', 'assets/spritesheets/Push.mp3');
-        this.load.audio('blip', 'assets/spritesheets/blip_select12.wav');
+        this.load.image('logo', './assets/images/gamelogo.png');
+        this.load.audio('backgroundMusic', 'assets/sfx/Push.mp3');
+        this.load.audio('blip', 'assets/sfx/blip_select12.wav');
       }
 
     create() {
@@ -15,7 +15,7 @@ class Menu extends Phaser.Scene {
         this.blip = this.sound.add('blip');
         this.backgroundMusic.play({ loop: true });
         this.backgroundMusic.setVolume(0.3);
-        this.add.image(width/2, height/3.5, 'logo').setScale(0.5);
+        this.add.image(width/2, height/6, 'logo').setScale(0.5);
         cursors = this.input.keyboard.createCursorKeys();
         let menuConfig = {
             fontFamily: 'Courier',
@@ -28,10 +28,24 @@ class Menu extends Phaser.Scene {
             },
             fixedWidth: 0
         }
-        this.add.text(this.scale.width/2, this.scale.height/1.8, 'You have escaped hell itself.', menuConfig).setOrigin(0.5);
+        let creditConfig = {
+            fontFamily: 'Courier',
+            fontSize: '14px',
+            color: '#FF0000',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 0
+        }
+        this.add.text(this.scale.width/2, this.scale.height/1.85, 'You have escaped hell itself.', menuConfig).setOrigin(0.5);
         this.add.text(this.scale.width/2, this.scale.height/1.68, 'Your creator is not too happy.', menuConfig).setOrigin(0.5);
         this.add.text(this.scale.width/2, this.scale.height/1.5, 'Use UP ARROW to jump and hold DOWN ARROW to lunge/roll', menuConfig).setOrigin(0.5);
         this.add.text(this.scale.width/2, this.scale.height/1.4, 'Press SPACE to play', menuConfig).setOrigin(0.5);
+        this.add.text(this.scale.width/2, this.scale.height/1.2, 'Credits:', creditConfig).setOrigin(0.5);
+        this.add.text(this.scale.width/2, this.scale.height/1.15, 'Sound effects and assets by Yahli Kijel', creditConfig).setOrigin(0.5);
+        this.add.text(this.scale.width/2, this.scale.height/1.1, 'Soundtrack found at: https://www.chosic.com/download-audio/53334/', creditConfig).setOrigin(0.5);
 
     }
 

@@ -12,17 +12,17 @@ class Play extends Phaser.Scene {
             frameWidth: 48,
             frameHeight: 48
         });
-        this.load.image('grass', './assets/spritesheets/grassy.png');
-        this.load.image('background', './assets/spritesheets/nightback.png');
-        this.load.image('cactus', './assets/spritesheets/cactus.png');
+        this.load.image('grass', './assets/images/grassyice.png');
+        this.load.image('background', './assets/images/nightback.png');
+        this.load.image('icicle', './assets/images/icicle.png');
         this.load.spritesheet('imp', './assets/spritesheets/imp.png', {
             frameWidth: 50,
             frameHeight: 30
         });
-        this.load.audio('backgroundMusic2', 'assets/spritesheets/Push 1.mp3');
-        this.load.audio('JumpNoise', 'assets/spritesheets/JumpNoise.mp3');
-        this.load.audio('RollNoise', 'assets/spritesheets/RollNoise.mp3');
-        this.load.audio('DeathNoise', 'assets/spritesheets/DeathNoise.mp3');
+        this.load.audio('backgroundMusic2', 'assets/sfx/Push 1.mp3');
+        this.load.audio('JumpNoise', 'assets/sfx/JumpNoise.mp3');
+        this.load.audio('RollNoise', 'assets/sfx/RollNoise.mp3');
+        this.load.audio('DeathNoise', 'assets/sfx/DeathNoise.mp3');
     }
 
     create() {
@@ -87,17 +87,13 @@ class Play extends Phaser.Scene {
             })
         });
 
-        // Create a group for cacti
-        this.cacti = this.physics.add.group();
+        this.icicles = this.physics.add.group();
 
-                // Enable collisions between the player and the cacti
         this.physics.add.collider(this.player, this.ground);
-        this.physics.add.collider(this.cacti, this.ground);
+        this.physics.add.collider(this.icicles, this.ground);
         
-                // Set up overlap detection between the player and the cacti
-        this.physics.add.overlap(this.player, this.cacti, this.cactusCollision, null, this);
+        this.physics.add.overlap(this.player, this.icicles, this.icicleCollision, null, this);
 
-        // Set up a timer event to spawn cacti at random intervals
         this.spawnObstacleTimer = this.time.addEvent({
             delay: Phaser.Math.Between(1000, 2500), // Adjust the delay as needed
             loop: true,
@@ -156,18 +152,16 @@ class Play extends Phaser.Scene {
 
     spawnObstacle() {
         const x = this.scale.width;
-        const y = this.scale.height - 61; // Position the obstacle on top of the ground
+        const y = this.scale.height - 75; // Position the obstacle on top of the ground
         let obstacle;
 
-        // Randomly decide whether to spawn a cactus or an imp
         if (Phaser.Math.Between(0, 1) === 0) {
-            // Spawn a cactus
-            obstacle = this.cacti.create(x, y, 'cactus').setScale(0.15);
-            obstacle.body.setSize(width / 3, height + 50, 30,0);
+            obstacle = this.icicles.create(x, y, 'icicle').setScale(0.19);
+            obstacle.body.setSize(width / 4, height + 50, 30,0);
         } else {
             // Spawn an imp
             var yVal = Phaser.Math.Between(30, 80);
-            obstacle = this.cacti.create(x, y-yVal, 'imp').setScale(4); // Adjust scale as needed
+            obstacle = this.icicles.create(x, y-yVal, 'imp').setScale(4); // Adjust scale as needed
             obstacle.body.setSize(obstacle.width/2.5, obstacle.height/2.7).setOffset(20,8); // Set collision size accordingly
             obstacle.anims.play('imp-animation');
         }
@@ -187,7 +181,7 @@ class Play extends Phaser.Scene {
         obstacle.setImmovable(true);
     }
 
-    cactusCollision(player, cactus) {
+    icicleCollision(player, icicle) {
         this.backgroundMusic2.stop();
         this.DeathNoise.play();
         this.scene.start('menuScene');
