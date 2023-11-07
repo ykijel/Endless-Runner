@@ -178,7 +178,7 @@ class Play extends Phaser.Scene {
         const randomDelay = Phaser.Math.Between(this.obstacleDelayMin, this.obstacleDelayMax); // Adjust the delay range as needed
         this.spawnObstacleTimer.delay = randomDelay;
 
-        if (this.score > 0 && this.score % 150 === 0 && this.obstacleDelayMin >= 400) {
+        if (this.score > 0 && this.score % 150 === 0 && this.obstacleDelayMin >= 300) {
             this.obstacleDelayMin -= 30; // Decrease the minimum delay
             this.obstacleDelayMax -= 100; // Decrease the maximum delay
         }
