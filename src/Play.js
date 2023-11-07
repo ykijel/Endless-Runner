@@ -175,7 +175,7 @@ class Play extends Phaser.Scene {
         obstacle.body.allowGravity = false; // Disable gravity for the obstacle
 
         // Set a random delay for the next obstacle spawn
-        const randomDelay = Phaser.Math.Between(800, 2300); // Adjust the delay range as needed
+        const randomDelay = Phaser.Math.Between(obstacleDelayMin, obstacleDelayMax); // Adjust the delay range as needed
         this.spawnObstacleTimer.delay = randomDelay;
 
         if (this.score > 0 && this.score % 100 === 0 && this.obstacleDelayMin >= 400) {
