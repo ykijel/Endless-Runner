@@ -199,6 +199,7 @@ class Play extends Phaser.Scene {
         // Move the background layer for parallax scrolling
         // this.background.tilePositionX += this.backgroundSpeed;
         this.ground.tilePositionX += this.backgroundSpeed;
+        this.background.tilePositionX += this.backgroundSpeed/2;
         if (this.score > 0 && this.score % 100 === 0) {
             this.backgroundSpeed+=0.12
         }
